@@ -13,7 +13,8 @@ class Database {
 public:
     Database();
 
-    
+    Table* findTableByName(const std::string& name);
+    const Table* findTableByName(const std::string& name) const;
 
     void importTable(const std::string& fileName, const std::string& table);
     void showTables() const;
@@ -27,7 +28,7 @@ public:
     void select(size_t colIdx, const std::string& value, const std::string& table) const;
     void updateRow(const std::string& table, size_t searchCol, const std::string& searchValue, size_t targetCol, const std::string& targetValue);
     void deleteRows(const std::string& table, size_t col, const std::string& value);
-    void insertRow(const std::string& table, const std::vector<std::string>& rowValues);
+    void insertRow(const std::string& table, const std::vector<std::string>& row);
 
     void innerJoin(const std::string& t1, size_t col1, const std::string& t2, size_t col2);
     int count(const std::string& table, size_t searchCol, const std::string& searchValue) const;
