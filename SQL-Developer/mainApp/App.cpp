@@ -5,57 +5,18 @@
 #include "../utils/Utils.h"
 #include "../fileManager/FileManager.h"
 
-App::App() : currFile(""), isFileOpened(false) {
+App::App() {
     db = Database(); 
 }
 
-void App::openFile(const std::string& fileName) {
-    if(isFileOpened) {
-        Utils::log("A file is already open", Utils::Color::RED);
-        return;
-    }
-
-    currFile = fileName;
-    Utils::log("Successfully opened file.", Utils::Color::GREEN);
-    isFileOpened = true;
-}
-
-void App::closeFile(){
-    if(!isFileOpened) {
-        Utils::log("No file is open", Utils::Color::RED);
-        return;
-    }
-
-    Utils::log("Successfully closed " + currFile, Utils::Color::GREEN);
-    currFile = "";
-    isFileOpened = false;
-}
-
 void App::save() {
-    if(!isFileOpened){
-        Utils::log("No file is open.", Utils::Color::RED);
-        return;
-    }
-
-    Utils::log("Successfully saved file!", Utils::Color::GREEN);
-}
-
-void App::saveAs(const std::string& fileName) {
-    if(!isFileOpened) {
-        Utils::log("No file is open.", Utils::Color::RED);
-        return;
-    }
-
-    Utils::log("Successfully saved file", Utils::Color::GREEN);
+    db.saveAllTables();
 }
 
 void App::help() const {
     std::cout << "\nCommands:\n"
-              << "open <file>\t\topens <file>\n"
-              << "close\t\t\tcloses currently opened file\n"
-              << "save\t\t\tsaves the currently open file\n"
-              << "saveas <file>\t\tsaves the currently open file in <file>\n"
-              << "help\t\t\tprints this information\n"
+              << "save\t\t\tsaves all tables and their changes\n"
+              << "help\t\t\tprints commands\n"
               << "exit\t\t\texits the program\n\n"
               << "import <file name> <table name>\n"
               << "showtables\n"
@@ -88,75 +49,56 @@ void App::executeCommand(const std::string& cmd) {
 
     if(data.empty()) return;
 
-    std::string action = data[0];
-
-    if(action == "open") {
-        if(data.size() >= 2) {
-            openFile(data[1]);
-        }
-
-        return;
-
-    }else if(action == "help") {
+    if(data[0] == "help"){
         help();
-        return;
 
-    } else if(action == "close") {
-        closeFile();
-        return;
-
-    } else if(action == "save") {
+    } else if(data[0] == "save") {
         save();
 
-    } else if(action == "saveas") {
-        if(data.size() >= 2) {
-            saveAs(data[1]);
-        }
-
-    } else if(action == "import") {
+    } else if(data[0] == "import") {
         if(data.size() >= 3) {
             db.importTable(data[1], data[2]);
         }
 
-    } else if(action == "showtables") {
+    } else if(data[0] == "showtables"){
         db.showTables();
 
-    } else if(action == "describe") {
+    } else if(data[0] == "describe") {
         if(data.size() >= 2) {
             db.describe(data[1]);
         }
 
-    } else if(action == "print") {
+    } else if(data[0] == "print") {
         if(data.size() >= 2) {
             db.printTable(data[1]);
         }
 
-    } else if(action == "export"){
+    } else if(data[0] == "export"){
         if(data.size() >= 3) {
             db.exportTable(data[1], data[2]);
         }
 
-    } else if(action == "select") {
+    } else if(data[0] == "select") {
         if(data.size() >= 4) {
             db.select(std::stoul(data[1]), data[2], data[3]);
         }
 
-    } else if(action == "addcolumn") {
+    } else if(data[0] == "addcolumn") {
         if(data.size() >= 4) {
             db.addColumn(data[1], data[2], data[3]);
         }
 
-    } else if(action == "update") {
+    } else if(data[0] == "update") {
         if(data.size() >= 6) {
             db.updateRow(data[1], std::stoul(data[2]), data[3], std::stoul(data[4]), data[5]);
         }
 
-    } else if(action == "delete"){
+    } else if(data[0] == "delete"){
         if(data.size() >= 4) {
             db.deleteRows(data[1], std::stoul(data[2]), data[3]);
         }
 
-    } else if(action == "insert") {
+    } else if(data[0] == "insert") {
         if(data.size() >= 3) {
             std::vector<std::string> values;
             int argCount = data.size();
@@ -167,22 +109,22 @@ void App::executeCommand(const std::string& cmd) {
 
             db.insertRow(data[1], values);
         }
-    } else if(action == "innerjoin") {
+    } else if(data[0] == "innerjoin") {
         if(data.size() >= 5) {
-            db.innerJoin(data[1], std::stoul(data[2]), data[3], std::stoul(data[4]));
+            db.innerJoin(data[1], std::stoi(data[2]), data[3], std::stoi(data[4]));
         }
 
-    } else if(action == "rename") {
+    } else if(data[0] == "rename") {
         if(data.size() >= 3) {
             db.renameTable(data[1], data[2]);
         }
 
-    } else if(action == "count") {
+    } else if(data[0] == "count") {
         if(data.size() >= 4) {
             db.count(data[1], std::stoul(data[2]), data[3]);
         }
 
-    } else if(action == "aggregate") {
+    } else if(data[0] == "aggregate") {
         if(data.size() >= 6) {
             db.aggregate(data[1], std::stoul(data[2]), data[3], std::stoul(data[4]), data[5]);
         }

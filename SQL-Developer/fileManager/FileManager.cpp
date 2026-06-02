@@ -8,6 +8,8 @@
 #include "../entities/Column.h"
 
 //TODO: error handling;
+
+//ads table name and the table's file name to the catalog
 void FileManager::addToCatalog(const std::string& tableName, const std::string& fileName, const std::string& catalogName) {
     std::ofstream catalogFile(catalogName, std::ios::app);
 
@@ -19,8 +21,9 @@ void FileManager::addToCatalog(const std::string& tableName, const std::string& 
     }
 }
 
+//reads table from file
 bool FileManager::loadTable(const std::string& fileName, Table& table) {
-    std::ifstream file(fileName);
+    std::ifstream file(FILE_PATH + fileName);
 
     if(!file.is_open()) {
         Utils::log("Could not open file.", Utils::Color::RED);
@@ -29,6 +32,7 @@ bool FileManager::loadTable(const std::string& fileName, Table& table) {
 
     std::string line;
 
+    //TODO: '\r'?
     if(std::getline(file, line)) {
         if(!line.empty() && line.back() == '\r'){
             line.pop_back();
@@ -58,8 +62,9 @@ bool FileManager::loadTable(const std::string& fileName, Table& table) {
     return true;
 }
 
+//writes table to file
 bool FileManager::saveTable(const std::string& fileName, const Table& table) {
-    std::ofstream file(fileName);
+    std::ofstream file(FILE_PATH + fileName);
 
     if(!file.is_open()) {
         Utils::log("Could not write to file " + fileName, Utils::Color::RED);
@@ -80,6 +85,41 @@ bool FileManager::saveTable(const std::string& fileName, const Table& table) {
         file << row;
     }
 
+    file.close();
+
+    return true;
+}
+
+bool FileManager::openFile(const std::string& fileName) {
+    std::ifstream file(FILE_PATH + fileName);
+
+    if(!file.is_open()) {
+        
+        //create new file
+        std::ofstream newFile(fileName);
+
+        if(!newFile.is_open()) {
+            Utils::log("Couldn't open file", Utils::Color::RED);
+        }
+
+        newFile.close();
+
+    } else {
+        file.close();
+    }
+
+    return true;
+}
+
+bool FileManager::saveFile(const std::string& fileName, const std::string& changes) {
+    std::ofstream file(fileName);
+
+    if(!file.is_open()) {
+        Utils::log("Couldn't save file", Utils::Color::RED);
+        return false;
+    }
+
+    file << changes;
     file.close();
 
     return true;

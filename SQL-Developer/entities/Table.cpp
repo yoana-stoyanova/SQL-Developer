@@ -24,6 +24,7 @@ void Table::addColumn(const std::string& name, const std::string& type) {
     Utils::log("Column added successfully!", Utils::Color::GREEN);
 }
 
+//all rows should be the correct size
 void Table::addRow(const std::vector<std::string>& row) {
     if (row.size() != cols.size()) {
         Utils::log("Invalid number of values!", Utils::Color::RED);
@@ -53,6 +54,7 @@ const std::vector<std::vector<std::string>>& Table::constGetRows() const {
     return rows;
 }
 
+//ros have to be modified in some cases
 std::vector<std::vector<std::string>>& Table::getRows() { 
     return rows; 
 }

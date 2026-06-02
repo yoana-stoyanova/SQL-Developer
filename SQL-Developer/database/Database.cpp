@@ -18,7 +18,7 @@ Table* Database::findTableByName(const std::string& name){
     return nullptr;
 }
 
-const Table* Database::findTableByName(const std::string& name) const {
+const Table* Database::constfindTableByName(const std::string& name) const {
     int len = tables.size();
 
     for(int i = 0; i < len; i++){
@@ -28,6 +28,26 @@ const Table* Database::findTableByName(const std::string& name) const {
     }
 
     return nullptr;
+}
+
+void Database::saveAllTables() {
+    if(tables.empty()) {
+        Utils::log("No tables.", Utils::Color::YELLOW);
+        return;
+    }
+
+    int len = tables.size();
+    int count = 0;
+
+    for(int i = 0; i < len; i++) {
+        std::string file = tables[i].getFileName(); 
+        
+        if(FileManager::saveTable(file, tables[i])) {
+            count++;
+        }
+    }
+
+    Utils::log("Successfully saved " + std::to_string(count) + " tables.", Utils::Color::GREEN);
 }
 
 void Database::importTable(const std::string& fileName, const std::string& tableName) {
@@ -66,7 +86,7 @@ void Database::showTables() const{
 }
 
 void Database::describe(const std::string& tableName) const{
-    const Table* t = findTableByName(tableName);
+    const Table* t = constfindTableByName(tableName);
 
     if(t == nullptr) {
         Utils::log("Table not found.", Utils::Color::RED);
@@ -77,7 +97,7 @@ void Database::describe(const std::string& tableName) const{
 }
 
 void Database::printTable(const std::string& tableName) const{
-    const Table* t = findTableByName(tableName);
+    const Table* t = constfindTableByName(tableName);
 
     if(t == nullptr) {
         Utils::log("Table not found.", Utils::Color::RED);
@@ -85,20 +105,21 @@ void Database::printTable(const std::string& tableName) const{
     }
 
     int len = t->getColumns().size();
-    std::string headers = "";
-    std::string divider = "";
+    std::string header = "";
+    std::string sep = "";
 
+    //builds the title row output
     for(int i = 0; i < len; i++){
-        headers += t->getColumns()[i].getName();
-        divider += "---------------------------";
+        header += t->getColumns()[i].getName();
+        sep += "---------------------------";
 
         if(i < len - 1){
-            headers += " \t| ";
+            header += " \t| ";
         }
     }
     
-    Utils::log(headers);
-    Utils::log(divider);
+    Utils::log(header);
+    Utils::log(sep);
 
     const std::vector<std::vector<std::string>>& rows = t->constGetRows();
 
@@ -109,6 +130,7 @@ void Database::printTable(const std::string& tableName) const{
         return;
     }
 
+    //builds the table rows output
     for(int i = 0; i < len2; i++){
 
         std::string output = "";
@@ -142,15 +164,15 @@ void Database::exportTable(const std::string& tableName, const std::string& file
     }
 }
 
-void Database::select(size_t colIdx, const std::string& value, const std::string& tableName) const {
-    const Table* t = findTableByName(tableName);
+void Database::select(size_t idx, const std::string& value, const std::string& tableName) const {
+    const Table* t = constfindTableByName(tableName);
 
     if (t == nullptr) {
         Utils::log("Table not found.", Utils::Color::RED);
         return;
     }
     
-    if(colIdx >= t->getColumns().size()){
+    if(idx >= t->getColumns().size()){
         Utils::log("Out of bounds.", Utils::Color::RED);
         return;
     }
@@ -161,8 +183,8 @@ void Database::select(size_t colIdx, const std::string& value, const std::string
     int count = 0;
 
     for(int i = 0; i < len; i++){
-        if(colIdx < rows[i].size()){
-            if(rows[i][colIdx] == value){
+        if(idx < rows[i].size()){
+            if(rows[i][idx] == value){
                 count++;
                 
                 std::string output = "";
@@ -170,8 +192,9 @@ void Database::select(size_t colIdx, const std::string& value, const std::string
                 
                 for(int j = 0; j < len2; j++){
                     output += rows[i][j];
+
                     if(j < len2 - 1){
-                        output += " \t| ";
+                        output += " \t\t| ";
                     }
                 }
                 Utils::log(output);
@@ -195,8 +218,6 @@ void Database::addColumn(const std::string& tableName, const std::string& col, c
     }
 
     t->addColumn(col, type);
-
-    Utils::log("Column added successfully to table!", Utils::Color::GREEN);
 }
 
 void Database::updateRow(const std::string& tableName, size_t searchCol, const std::string& searchValue, size_t targetCol, const std::string& targetValue) {
@@ -241,6 +262,7 @@ void Database::deleteRows(const std::string& table, size_t col, const std::strin
     std::vector<std::vector<std::string>>& rows = t->getRows();
     size_t count = 0;
 
+    //needs to be updated
     for(int i = 0; i < rows.size(); i++) {
         if(col < rows[i].size() && rows[i][col] == value) {
             rows.erase(rows.begin() + i);
@@ -269,8 +291,8 @@ void Database::insertRow(const std::string& table, const std::vector<std::string
 }
 
 void Database::innerJoin(const std::string& t1, size_t col1, const std::string& t2, size_t col2){
-    const Table* table1 = findTableByName(t1);
-    const Table* table2 = findTableByName(t2);
+    const Table* table1 = constfindTableByName(t1);
+    const Table* table2 = constfindTableByName(t2);
     
     if(!table1 || !table2){
         Utils::log("Not all tables exist.", Utils::Color::RED);
@@ -299,12 +321,13 @@ void Database::innerJoin(const std::string& t1, size_t col1, const std::string& 
 
     Table newTable = Table(newName, "{JOIN_TABLE}");
 
+    //adding all table columns to the joined table
     for(int i = 0; i < len1; i++){
         newTable.addColumn(table1->getColumns()[i].getName(), Utils::getTypeAsString(table1->getColumns()[i].getType()));
     }
 
     for(int i = 0; i < len2; i++) {
-        newTable.addColumn(table2->getColumns()[i].getName(), Utils::getTypeAsString(table1->getColumns()[i].getType()));
+        newTable.addColumn(table2->getColumns()[i].getName(), Utils::getTypeAsString(table2->getColumns()[i].getType()));
     }
 
     const std::vector<std::vector<std::string>>& rows1 = table1->constGetRows();
@@ -319,7 +342,6 @@ void Database::innerJoin(const std::string& t1, size_t col1, const std::string& 
         }
 
         int len22 = rows2.size();
-
         for(int j = 0; j < len22; j++){
             if(col2 >= rows2[j].size()) {
                 continue;
@@ -328,11 +350,13 @@ void Database::innerJoin(const std::string& t1, size_t col1, const std::string& 
             if(rows1[i][col1] == rows2[j][col2]){
                 std::vector<std::string> newRow;
 
+                //add cells from table1
                 int rlen1 = rows1[i].size();
                 for(int a = 0; a < rlen1; a++){
                     newRow.push_back(rows1[i][a]);
                 }
 
+                //add cells from table2
                 int rlen2 = rows2[j].size();
                 for(int b = 0; b < rows2[j].size(); b++){
                     newRow.push_back(rows2[j][b]);
@@ -372,7 +396,7 @@ void Database::renameTable(const std::string& oldName, const std::string& newNam
 }
 
 int Database::count(const std::string& tableName, size_t searchCol, const std::string& searchValue) const {
-    const Table* t = findTableByName(tableName);
+    const Table* t = constfindTableByName(tableName);
 
     if(t == nullptr) {
         Utils::log("Table not found.", Utils::Color::RED);
@@ -392,6 +416,7 @@ int Database::count(const std::string& tableName, size_t searchCol, const std::s
         }
     }
 
+    Utils::log(std::to_string(count));
     return count;
 }
 
@@ -418,6 +443,11 @@ void Database::aggregate(const std::string& tableName, size_t searchCol, const s
     const std::vector<std::vector<std::string>>& rows = t->constGetRows();
 
     int len = rows.size();
+
+    if(len == 0 || searchCol >= rows[0].size() || targetCol >= rows[0].size()) {
+        Utils::log("Invalid values", Utils::Color::RED);
+        return;
+    }
     
     int count = 0;
     double res = 0.0;
@@ -425,24 +455,23 @@ void Database::aggregate(const std::string& tableName, size_t searchCol, const s
     if(operation == "product"){
         res = 1.0;
 
+    //the smallest value for double type
     } else if(operation == "maximum"){
         res = -__DBL_MAX__;
 
+    //the biggest value for double type
     } else if(operation == "minimum"){
         res = __DBL_MAX__;
     }
 
     for(int i = 0; i < len; i++) {
-        if(searchCol >= rows[i].size() || targetCol >= rows[i].size()) {
-            continue;
-        }
-
         if(rows[i][searchCol] == searchValue) {
             count++;
             
             double curr = 0.0;
 
             if(!rows[i][targetCol].empty()){
+                //string to double
                 curr = std::stod(rows[i][targetCol]);
             }
 
@@ -479,13 +508,5 @@ void Database::aggregate(const std::string& tableName, size_t searchCol, const s
          return;
     }
 
-    std::string str;
-    if(type == DataType::INT) {
-        str = std::to_string(static_cast<long long>(res));
-
-    } else {
-        str = std::to_string(res);
-    }
-
-    Utils::log("Result: " + str, Utils::Color::GREEN);
+    Utils::log("Result: " + std::to_string(res), Utils::Color::GREEN);
 }

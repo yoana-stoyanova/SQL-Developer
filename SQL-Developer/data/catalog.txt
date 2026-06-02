@@ -3,3 +3,6 @@ users|data/users.txt
 users|data/users.txt
 employees|data/employees.txt
 departments|data/departments.txt
+employees|employees.txt
+departments|departments.txt
+employees|employees.txt

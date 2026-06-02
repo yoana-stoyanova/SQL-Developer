@@ -10,13 +10,14 @@ class Database {
     std::vector<Table> tables; 
     std::string catalogFileName = CATALOG_FILE;
 
+    //table needs to be modified in some cases
+    Table* findTableByName(const std::string& name);
 public:
     Database();
 
+    const Table* constfindTableByName(const std::string& name) const;
 
-
-    Table* findTableByName(const std::string& name);
-    const Table* findTableByName(const std::string& name) const;
+    void saveAllTables();
 
     void importTable(const std::string& fileName, const std::string& table);
     void showTables() const;
