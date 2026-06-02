@@ -89,38 +89,3 @@ bool FileManager::saveTable(const std::string& fileName, const Table& table) {
 
     return true;
 }
-
-bool FileManager::openFile(const std::string& fileName) {
-    std::ifstream file(FILE_PATH + fileName);
-
-    if(!file.is_open()) {
-        
-        //create new file
-        std::ofstream newFile(fileName);
-
-        if(!newFile.is_open()) {
-            Utils::log("Couldn't open file", Utils::Color::RED);
-        }
-
-        newFile.close();
-
-    } else {
-        file.close();
-    }
-
-    return true;
-}
-
-bool FileManager::saveFile(const std::string& fileName, const std::string& changes) {
-    std::ofstream file(fileName);
-
-    if(!file.is_open()) {
-        Utils::log("Couldn't save file", Utils::Color::RED);
-        return false;
-    }
-
-    file << changes;
-    file.close();
-
-    return true;
-}
