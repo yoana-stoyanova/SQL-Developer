@@ -1,8 +1,11 @@
 #include <iostream>
 
+#include "mainApp/App.h"
+
 int main() {
-
-    std::cout<<"HH";
-
+    App application;
+    
+    application.run();
+    
     return 0;
 }

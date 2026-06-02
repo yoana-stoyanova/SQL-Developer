@@ -1,0 +1,4 @@
+department_id[INT]|dept_name[STRING]|building[STRING]
+10|Engineering|Tech_Tower
+20|Marketing|Annex_A
+40|Security|Main_Gate

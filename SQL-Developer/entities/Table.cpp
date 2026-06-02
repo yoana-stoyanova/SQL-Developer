@@ -2,22 +2,16 @@
 #include "Table.h"
 #include "../utils/Utils.h"
 
-//TODO: error handling?
-//TODO: add comments
-
 Table::Table(std::string name, std::string fileName) : name(name), fileName(fileName) {}
 
-//SHOWCASES TABLE NAME, COLUMNS AND THEIR TYPES
 void Table::showDetails() const {
     int len = cols.size();
-
+    Utils::log("TABLE:");
     for (int i = 0; i < len; i++) {
-        Utils::log("TABLE:");
         Utils::log(cols[i].getName() + " - " + Utils::getTypeAsString(cols[i].getType()));
     }
 }
 
-//INSERT INTO
 void Table::addColumn(const std::string& name, const std::string& type) {
     cols.push_back(Column(name, Utils::stringToDataType(type)));
 
@@ -30,7 +24,6 @@ void Table::addColumn(const std::string& name, const std::string& type) {
     Utils::log("Column added successfully!", Utils::Color::GREEN);
 }
 
-//INSERT INTO [TABLE NAME] VALUES (SPLIT BY , - CORRESPOND TO COL VALS)
 void Table::addRow(const std::vector<std::string>& row) {
     if (row.size() != cols.size()) {
         Utils::log("Invalid number of values!", Utils::Color::RED);

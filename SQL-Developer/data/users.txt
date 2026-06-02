@@ -1,0 +1,5 @@
+id[INT]|name[STRING]|balance[DOUBLE]|status[STRING]
+1|Alice|1500.50|ACTIVE
+2|Bob|45.00|ACTIVE
+3|Charlie|0.00|PENDING
+4|Daniel|44|INACTIVE

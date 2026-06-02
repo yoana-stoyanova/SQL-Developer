@@ -13,6 +13,8 @@ class Database {
 public:
     Database();
 
+
+
     Table* findTableByName(const std::string& name);
     const Table* findTableByName(const std::string& name) const;
 

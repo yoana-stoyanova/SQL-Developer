@@ -4,19 +4,13 @@
 #include <string>
 #include <vector>
 #include "../entities/Column.h"
+#include "Datatype.h"
 
 const std::string FILE_PATH = "data/";
 const std::string FILE_TYPE = ".txt";
 
 class Utils {
 public:
-    enum class DataType {
-        INT,
-        DOUBLE,
-        STRING,
-        NULL_TYPE
-    };
-
     enum Color {
         DEFAULT,
         RED,
@@ -30,7 +24,7 @@ public:
     static DataType stringToDataType(const std::string& type);
 
     static std::vector<std::string> splitRow(const std::string& row, char sep);
-    static std::string Utils::concatRow(const std::vector<std::string>& data, char sep);
+    static std::string concatRow(const std::vector<std::string>& data, char sep);
 
     static std::vector<Column> splitHeader(const std::string& titleRow, char sep);
     static std::string concatHeader(const std::vector<Column>& columns, char sep);

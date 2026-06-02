@@ -1,3 +1,10 @@
+#ifndef TABLE_H
+#define TABLE_H
+
+#include <string>
+#include <vector>
+#include "Column.h"
+
 #include <vector>
 #include "Column.h"
 
@@ -27,3 +34,5 @@ public:
     const std::vector<std::vector<std::string>>& constGetRows() const;
     std::vector<std::vector<std::string>>& getRows();
 };
+
+#endif

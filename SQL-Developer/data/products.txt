@@ -1,0 +1,4 @@
+product_id[INT]|item_name[STRING]|price[DOUBLE]|min_status_required[STRING]
+101|Premium_Subscription|99.99|ACTIVE
+102|Basic_Pass|14.99|ACTIVE
+103|Trial_Kit|0.00|PENDING

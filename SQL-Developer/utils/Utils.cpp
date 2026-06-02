@@ -35,7 +35,7 @@ std::string Utils::getTypeAsString(DataType type){
     }
 }
 
-Utils::DataType Utils::stringToDataType(const std::string& type) {
+DataType Utils::stringToDataType(const std::string& type) {
     if(type.empty() || type == "NULL"){
         return DataType::NULL_TYPE;
 
@@ -156,7 +156,7 @@ std::string Utils::fileTableName(const std::string& fileName) {
     }
 
     size_t end = fileName.length();
-    if(fileName.length() >= FILE_TYPE.length() && fileName == (fileName.length() - FILE_TYPE.length(), FILE_TYPE.length(), FILE_TYPE)){
+    if (fileName.length() >= FILE_TYPE.length() && fileName.substr(fileName.length() - FILE_TYPE.length()) == FILE_TYPE) {
         end = fileName.length() - FILE_TYPE.length();
     }
 

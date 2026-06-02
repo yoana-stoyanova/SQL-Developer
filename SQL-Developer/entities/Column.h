@@ -1,15 +1,19 @@
-#include <string>
-#include "../utils/Utils.h"
+#ifndef COLUMN_H
+#define COLUMN_H
 
-//TODO: undef?
+#include <string>
+#include "../utils/DataType.h"
+
 class Column {
 private:
     std::string name;
-    Utils::DataType type;
+    DataType type;
 
 public:
-    Column(const std::string& name, Utils::DataType type);
+    Column(const std::string& name, DataType type);
 
     std::string getName() const;
-    Utils::DataType getType() const;
+    DataType getType() const;
 };
+
+#endif

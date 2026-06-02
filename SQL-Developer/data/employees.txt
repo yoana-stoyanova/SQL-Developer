@@ -1,0 +1,5 @@
+emp_id[INT]|name[STRING]|salary[DOUBLE]|department_id[INT]
+1|Alice|75000.00|10
+2|Bob|62000.50|20
+3|Charlie|81000.00|10
+4|Daniel|55000.00|30

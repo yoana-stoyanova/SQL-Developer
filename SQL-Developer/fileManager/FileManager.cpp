@@ -8,6 +8,17 @@
 #include "../entities/Column.h"
 
 //TODO: error handling;
+void FileManager::addToCatalog(const std::string& tableName, const std::string& fileName, const std::string& catalogName) {
+    std::ofstream catalogFile(catalogName, std::ios::app);
+
+    if(catalogFile.is_open()) {
+        catalogFile << tableName << "|" << fileName << "\n";
+        catalogFile.close();
+    } else {
+        Utils::log("Could not update catalog.", Utils::Color::YELLOW);
+    }
+}
+
 bool FileManager::loadTable(const std::string& fileName, Table& table) {
     std::ifstream file(fileName);
 
@@ -39,6 +50,7 @@ bool FileManager::loadTable(const std::string& fileName, Table& table) {
         }
 
         std::vector<std::string> row = Utils::splitRow(line, '|');
+
         table.addRow(row);
     }
 

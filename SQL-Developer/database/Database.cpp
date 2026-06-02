@@ -2,8 +2,8 @@
 #include "../utils/Utils.h"
 #include "../fileManager/FileManager.h"
 #include <iostream>
+#include "../utils/DataType.h"
 
-//TODO: Add Catalog!!!
 Database::Database() {}
 
 Table* Database::findTableByName(const std::string& name){
@@ -40,6 +40,8 @@ void Database::importTable(const std::string& fileName, const std::string& table
     
     if(FileManager::loadTable(fileName, newTable)) {
         tables.push_back(newTable);
+
+        FileManager::addToCatalog(tableName, fileName, catalogFileName);
 
         Utils::log("Table successfully imported!", Utils::Color::GREEN);
 
@@ -132,6 +134,7 @@ void Database::exportTable(const std::string& tableName, const std::string& file
     }
 
     if(FileManager::saveTable(fileName, *t)){
+        FileManager::addToCatalog(tableName, fileName, catalogFileName);
         Utils::log("Table successfully exported!", Utils::Color::GREEN);
 
     } else {
@@ -405,9 +408,9 @@ void Database::aggregate(const std::string& tableName, size_t searchCol, const s
         return;
     }
 
-    Utils::DataType type = t->getColumns()[targetCol].getType();
+    DataType type = t->getColumns()[targetCol].getType();
 
-    if(type != Utils::DataType::INT && type != Utils::DataType::DOUBLE) {
+    if(type != DataType::INT && type != DataType::DOUBLE) {
         Utils::log("Column isn't INT or DOUBLE.", Utils::Color::RED);
         return;
     }
@@ -437,7 +440,6 @@ void Database::aggregate(const std::string& tableName, size_t searchCol, const s
         if(rows[i][searchCol] == searchValue) {
             count++;
             
-            //Null wil be 0
             double curr = 0.0;
 
             if(!rows[i][targetCol].empty()){
@@ -478,7 +480,7 @@ void Database::aggregate(const std::string& tableName, size_t searchCol, const s
     }
 
     std::string str;
-    if(type == Utils::DataType::INT) {
+    if(type == DataType::INT) {
         str = std::to_string(static_cast<long long>(res));
 
     } else {
