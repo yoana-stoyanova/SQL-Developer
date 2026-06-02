@@ -1,0 +1,9 @@
+#include <string>
+#include <vector>
+#include "../entities/Table.h"
+
+class FileManager {
+public:
+    static bool loadTable(const std::string& fileName, Table& table);
+    static bool saveTable(const std::string& fileName, const Table& table);
+};

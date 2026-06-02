@@ -5,7 +5,7 @@
 //TODO: error handling?
 //TODO: add comments
 
-Table::Table(std::string name, std::string fileName) : name(name), fileName(fileName){}
+Table::Table(std::string name, std::string fileName) : name(name), fileName(fileName) {}
 
 //SHOWCASES TABLE NAME, COLUMNS AND THEIR TYPES
 void Table::showDetails() const {
@@ -48,10 +48,18 @@ void Table::setName(const std::string& newName){
     name = newName; 
 }
 
+const std::string Table::getFileName() const {
+    return fileName;
+}
+
 const std::vector<Column>& Table::getColumns() const {
     return cols;
 }
 
-const std::vector<std::vector<std::string>>& Table::getRows() const {
+const std::vector<std::vector<std::string>>& Table::constGetRows() const {
     return rows;
+}
+
+std::vector<std::vector<std::string>>& Table::getRows() { 
+    return rows; 
 }

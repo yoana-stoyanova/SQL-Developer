@@ -15,11 +15,15 @@ public:
     void showDetails() const;
 
     void addColumn(const std::string& name, const std::string& type);
-    void Table::addRow(const std::vector<std::string>& row);
+    void addRow(const std::vector<std::string>& row);
 
-    std::string Table::getName() const;
-    void Table::setName(const std::string& name);
+    std::string getName() const;
+    void setName(const std::string& name);
 
-    const std::vector<Column>& Table::getColumns() const;
-    const std::vector<std::vector<std::string>>& Table::getRows() const;
+    const std::string getFileName() const;
+
+    const std::vector<Column>& getColumns() const;
+
+    const std::vector<std::vector<std::string>>& constGetRows() const;
+    std::vector<std::vector<std::string>>& getRows();
 };
